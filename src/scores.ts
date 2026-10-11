@@ -18,6 +18,44 @@ export interface ScoreCheck {
 	detail: string;
 }
 
+/**
+ * One sample's outcome within a multi-sample benchmark case.
+ */
+export interface SampleOutcome {
+	passed: boolean;
+	/** Per-sample metric detail, e.g. "Keyword Check: pass (score 1)". */
+	detail: string;
+}
+
+/**
+ * Collapse one benchmark case's per-sample outcomes into a single check with
+ * pass@1 / pass@k scoring (command 2 samples each prompt k times).
+ *
+ * With a single sample (k = 1, the default) there is nothing to aggregate:
+ * the check is just that sample's own result, exactly as before sampling
+ * existed. With k > 1, pass@1 is the mean single-sample success rate
+ * (typical-try reliability) and pass@k is 1 when at least one sample passed
+ * (the capability ceiling); the check counts as passed when pass@k hits, so
+ * the scoreboard's ✓/✗ answers "can the model solve this case" while the
+ * detail keeps the reliability reading. Pure and dependency-free, like the
+ * rest of this module.
+ */
+export function summarizePassAtK(label: string, samples: SampleOutcome[], k: number): ScoreCheck {
+	if (k <= 1) {
+		const only = samples[0];
+		return { label, passed: only?.passed ?? false, detail: only?.detail ?? 'no samples recorded' };
+	}
+	const passed = samples.filter((sample) => sample.passed).length;
+	const total = samples.length;
+	const passAt1 = total > 0 ? passed / total : 0;
+	const passAtK = passed > 0 ? 1 : 0;
+	return {
+		label,
+		passed: passAtK === 1,
+		detail: `${passed}/${total} samples passed · pass@1 ${passAt1.toFixed(2)} · pass@${k} ${passAtK.toFixed(2)}`,
+	};
+}
+
 export type ScoreKind = 'agent-run' | 'model-benchmark';
 
 /** One evaluated run: what it was, when it finished, and how it scored. */
