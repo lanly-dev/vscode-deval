@@ -1,8 +1,8 @@
 {
   "name": "deval",
   "displayName": "Deval - Agent Evaluator ✅",
-  "description": "Run DeepEval TypeScript test suites to evaluate your agent behavior",
-  "version": "0.0.1",
+  "description": "Run DeepEval TypeScript test suites to evaluate your agent behavior.",
+  "version": "0.0.2",
   "publisher": "lanly-dev",
   "sponsor": {
     "url": "https://github.com/sponsors/lanly-dev"
@@ -21,7 +21,6 @@
     "deepeval",
     "evaluation",
     "llm",
-    "test",
     "vitest"
   ],
   "icon": "media/deval.png",
@@ -129,6 +128,13 @@
           ],
           "default": "npm",
           "description": "Package manager the Scaffold Sample Benchmark command uses to install deepeval and vitest."
+        },
+        "deval.samplesPerPrompt": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 5,
+          "description": "How many times each prompt is asked in 'Deval: Benchmark Chat Model'. Values above 1 enable pass@k scoring (pass@1 / pass@k per case) at the cost of proportionally more model calls."
         }
       }
     }

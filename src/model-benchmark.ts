@@ -8,7 +8,7 @@ import { join, relative, sep } from 'node:path';
 import { clearTimeout, setTimeout } from 'node:timers';
 
 import { ensureDeepEvalReady, devalDirectoryUri, executeTaskWithReporting } from './suites';
-import { appendScore, type ScoreCheck } from './scores';
+import { appendScore, summarizePassAtK, type SampleOutcome, type ScoreCheck } from './scores';
 import { pickChatModel } from './chat-models';
 
 /** Environment variable the staged suite reads the model responses from. */
@@ -33,6 +33,8 @@ interface ModelResponse {
 	id: string;
 	prompt: string;
 	response: string;
+	/** 1-based sample index: each prompt is asked SAMPLES_PER_PROMPT times. */
+	sample: number;
 	error?: string;
 }
 
@@ -101,6 +103,26 @@ async function askModel(
  */
 const MODEL_PROMPT_TIMEOUT_MS = 180_000;
 
+/**
+ * Default samples collected per prompt when the `deval.samplesPerPrompt`
+ * setting is absent. More than one sample lets the benchmark report pass@1
+ * (typical single-try reliability) and pass@k (the model's capability
+ * ceiling: solved in at least one of k tries), which a single sample can't
+ * distinguish — a good model can flub once, a weak one can get lucky once.
+ * Costs k times the model calls.
+ */
+const DEFAULT_SAMPLES_PER_PROMPT = 1;
+/** Hard bounds for `deval.samplesPerPrompt`; VS Code enforces these too. */
+const MIN_SAMPLES_PER_PROMPT = 1;
+const MAX_SAMPLES_PER_PROMPT = 5;
+
+/** Read `deval.samplesPerPrompt`, clamped to its valid range. */
+function readSamplesPerPrompt(): number {
+	const configured = vscode.workspace.getConfiguration('deval').get<unknown>('samplesPerPrompt');
+	const value = typeof configured === 'number' && Number.isInteger(configured) ? configured : DEFAULT_SAMPLES_PER_PROMPT;
+	return Math.min(MAX_SAMPLES_PER_PROMPT, Math.max(MIN_SAMPLES_PER_PROMPT, value));
+}
+
 /** Reject when `promise` takes longer than `ms`. */
 function withTimeout<T>(promise: Promise<T>, ms: number, what: string): Promise<T> {
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -140,6 +162,8 @@ export async function runModelBenchmark(context: vscode.ExtensionContext): Promi
 		return;
 	}
 
+	const samplesPerPrompt = readSamplesPerPrompt();
+
 	const responses = await vscode.window.withProgress<ModelResponse[] | undefined>(
 		{
 			location: vscode.ProgressLocation.Notification,
@@ -148,20 +172,23 @@ export async function runModelBenchmark(context: vscode.ExtensionContext): Promi
 		},
 		async (progress, token) => {
 			const collected: ModelResponse[] = [];
+			const totalSteps = spec.length * samplesPerPrompt;
 			for (const [index, testCase] of spec.entries()) {
-				if (token.isCancellationRequested) {
-					return undefined;
-				}
-				progress.report({
-					message: `${index + 1}/${spec.length}: ${testCase.id}`,
-					increment: 100 / spec.length,
-				});
-				try {
-					const response = await askModel(model, testCase.prompt, token);
-					collected.push({ id: testCase.id, prompt: testCase.prompt, response });
-				} catch (error) {
-					const message = error instanceof Error ? error.message : String(error);
-					collected.push({ id: testCase.id, prompt: testCase.prompt, response: '', error: message });
+				for (let sample = 1; sample <= samplesPerPrompt; sample++) {
+					if (token.isCancellationRequested) {
+						return undefined;
+					}
+					progress.report({
+						message: `${index + 1}/${spec.length}: ${testCase.id} (sample ${sample}/${samplesPerPrompt})`,
+						increment: 100 / totalSteps,
+					});
+					try {
+						const response = await askModel(model, testCase.prompt, token);
+						collected.push({ id: testCase.id, prompt: testCase.prompt, response, sample });
+					} catch (error) {
+						const message = error instanceof Error ? error.message : String(error);
+						collected.push({ id: testCase.id, prompt: testCase.prompt, response: '', sample, error: message });
+					}
 				}
 			}
 			return collected;
@@ -182,7 +209,10 @@ export async function runModelBenchmark(context: vscode.ExtensionContext): Promi
 		await vscode.workspace.fs.createDirectory(runDirectory);
 		await vscode.workspace.fs.writeFile(
 			responsesUri,
-			Buffer.from(JSON.stringify({ model: model.name, created: timestamp, responses }, null, 2), 'utf8'),
+			Buffer.from(
+				JSON.stringify({ model: model.name, created: timestamp, samplesPerPrompt, responses }, null, 2),
+				'utf8',
+			),
 		);
 		for (const name of ['model-benchmark.test.ts', 'spec.json']) {
 			await vscode.workspace.fs.copy(
@@ -229,7 +259,7 @@ export async function runModelBenchmark(context: vscode.ExtensionContext): Promi
 	// Record the score even when the benchmark failed: a failing run is still
 	// a score worth comparing. When the run produced no results file at all,
 	// say so — otherwise the missing scoreboard entry is a silent mystery.
-	const recorded = await recordBenchmarkScore(workspaceFolder, latestRunFile, runDirectory, model.name);
+	const recorded = await recordBenchmarkScore(workspaceFolder, latestRunFile, runDirectory, model.name, samplesPerPrompt);
 	if (!recorded) {
 		void vscode.window.showWarningMessage(
 			`Deval: the benchmark finished without producing results, so no score was recorded. See the terminal for what happened.`,
@@ -247,8 +277,9 @@ async function recordBenchmarkScore(
 	latestRunFile: string,
 	runDirectory: vscode.Uri,
 	modelName: string,
+	samplesPerPrompt: number,
 ): Promise<boolean> {
-	const checks = await readBenchmarkChecks(latestRunFile, vscode.Uri.joinPath(runDirectory, 'spec.json'));
+	const checks = await readBenchmarkChecks(latestRunFile, vscode.Uri.joinPath(runDirectory, 'spec.json'), samplesPerPrompt);
 	if (!checks) {
 		return false;
 	}
@@ -262,7 +293,11 @@ async function recordBenchmarkScore(
 }
 
 /** Parse DeepEval's `.latest_test_run.json` into one check per benchmark case. */
-async function readBenchmarkChecks(latestRunFile: string, stagedSpecUri: vscode.Uri): Promise<ScoreCheck[] | undefined> {
+async function readBenchmarkChecks(
+	latestRunFile: string,
+	stagedSpecUri: vscode.Uri,
+	samplesPerPrompt: number,
+): Promise<ScoreCheck[] | undefined> {
 	let latest: { cases?: Array<{ metricsData?: Array<{ name?: string; success?: boolean; score?: number; reason?: string }> }> };
 	try {
 		latest = JSON.parse(await readFile(latestRunFile, 'utf8'));
@@ -274,7 +309,8 @@ async function readBenchmarkChecks(latestRunFile: string, stagedSpecUri: vscode.
 		return undefined;
 	}
 	// DeepEval's results file doesn't name the cases, so label them from the
-	// staged spec, which lists them in run order.
+	// staged spec, which lists them in run order. The suite emits
+	// `samplesPerPrompt` consecutive results per spec case, so regroup them.
 	let caseIds: string[] = [];
 	try {
 		const spec = JSON.parse(await readFile(stagedSpecUri.fsPath, 'utf8'));
@@ -286,12 +322,10 @@ async function readBenchmarkChecks(latestRunFile: string, stagedSpecUri: vscode.
 	} catch {
 		// Fall back to positional labels below.
 	}
-	return cases.map((testCase, index) => {
+	const sampleOutcome = (testCase: (typeof cases)[number]): SampleOutcome => {
 		const metrics = Array.isArray(testCase.metricsData) ? testCase.metricsData : [];
-		const failed = metrics.filter((metric) => metric.success === false);
 		return {
-			label: caseIds[index] ?? `case ${index + 1}`,
-			passed: metrics.length > 0 && failed.length === 0,
+			passed: metrics.length > 0 && metrics.every((metric) => metric.success !== false),
 			detail: metrics.length
 				? metrics
 						.map(
@@ -303,5 +337,14 @@ async function readBenchmarkChecks(latestRunFile: string, stagedSpecUri: vscode.
 						.join('; ')
 				: 'no metrics reported',
 		};
-	});
+	};
+	const checks: ScoreCheck[] = [];
+	for (let offset = 0; offset < cases.length; offset += samplesPerPrompt) {
+		const group = cases.slice(offset, offset + samplesPerPrompt);
+		const groupIndex = Math.floor(offset / samplesPerPrompt);
+		checks.push(
+			summarizePassAtK(caseIds[groupIndex] ?? `case ${groupIndex + 1}`, group.map(sampleOutcome), samplesPerPrompt),
+		);
+	}
+	return checks;
 }

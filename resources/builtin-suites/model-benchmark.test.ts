@@ -7,6 +7,10 @@
  * stages this suite next to it, and runs it with `DEEPEVAL_MODEL_RESPONSES`
  * pointing at the responses file.
  *
+ * Each prompt is asked SAMPLES_PER_PROMPT times (see the command), so every
+ * case runs once per sample — 33 tests for the 11 cases — and the extension
+ * aggregates the per-sample results into pass@1 / pass@k scores afterwards.
+ *
  * Scoring is deterministic — no API key is needed — and comes in two kinds:
  * - `keyword` cases pass when the response contains the required keywords
  *   (case-insensitive) and none of the forbidden ones.
@@ -55,6 +59,8 @@ interface BenchmarkCase {
 interface ModelResponse {
 	id: string;
 	response: string;
+	/** 1-based sample index; absent in responses files written before sampling. */
+	sample?: number;
 }
 
 /**
@@ -249,16 +255,29 @@ function loadCases(): BenchmarkCase[] {
 	return parsed as BenchmarkCase[];
 }
 
-function loadResponses(): Map<string, string> | undefined {
+function loadResponses(): Map<string, string[]> | undefined {
 	const path = process.env[ENV_VAR];
 	if (!path) {
 		return undefined;
 	}
 	const parsed: unknown = JSON.parse(readFileSync(path, 'utf8'));
 	const list = (Array.isArray(parsed) ? parsed : (parsed as { responses: unknown }).responses) as ModelResponse[];
-	const responses = new Map<string, string>();
+	const grouped = new Map<string, { response: string; sample: number }[]>();
 	for (const entry of list) {
-		responses.set(entry.id, entry.response ?? '');
+		const bucket = grouped.get(entry.id) ?? [];
+		bucket.push({
+			response: entry.response ?? '',
+			sample: typeof entry.sample === 'number' ? entry.sample : bucket.length + 1,
+		});
+		grouped.set(entry.id, bucket);
+	}
+	const responses = new Map<string, string[]>();
+	for (const [id, bucket] of grouped) {
+		bucket.sort((a, b) => a.sample - b.sample);
+		responses.set(
+			id,
+			bucket.map((entry) => entry.response),
+		);
 	}
 	return responses;
 }
@@ -271,23 +290,25 @@ describe('built-in chat model benchmark', () => {
 	}
 
 	for (const testCase of loadCases()) {
-		it(`model: ${testCase.id}`, async () => {
-			const response = responses.get(testCase.id);
-			if (response === undefined) {
-				throw new Error(`no response recorded for case "${testCase.id}"`);
-			}
-			const llmTestCase = new LLMTestCase({
-				input: testCase.prompt,
-				actualOutput: response,
-			});
-			if (testCase.kind === 'code') {
-				if (!testCase.function || !Array.isArray(testCase.vectors) || testCase.vectors.length === 0) {
-					throw new Error(`code case "${testCase.id}" is missing its function or vectors`);
+		const samples = responses.get(testCase.id) ?? [];
+		if (samples.length === 0) {
+			throw new Error(`no responses recorded for case "${testCase.id}"`);
+		}
+		samples.forEach((response, index) => {
+			it(`model: ${testCase.id} (sample ${index + 1}/${samples.length})`, async () => {
+				const llmTestCase = new LLMTestCase({
+					input: testCase.prompt,
+					actualOutput: response,
+				});
+				if (testCase.kind === 'code') {
+					if (!testCase.function || !Array.isArray(testCase.vectors) || testCase.vectors.length === 0) {
+						throw new Error(`code case "${testCase.id}" is missing its function or vectors`);
+					}
+					await expect(llmTestCase).toPass([new CodeExecutionMetric(testCase.function, testCase.vectors)]);
+				} else {
+					await expect(llmTestCase).toPass([new KeywordMetric(testCase.required, testCase.forbidden ?? [])]);
 				}
-				await expect(llmTestCase).toPass([new CodeExecutionMetric(testCase.function, testCase.vectors)]);
-			} else {
-				await expect(llmTestCase).toPass([new KeywordMetric(testCase.required, testCase.forbidden ?? [])]);
-			}
+			});
 		});
 	}
 });
