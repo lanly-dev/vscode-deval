@@ -18,7 +18,7 @@ The bundled suites use **deterministic metrics only**, so they run offline with 
 
 ## Commands
 - `Deval: Evaluate Captured Agent Run` — Evaluate Captured Agent Run tests your `@deval` agent's behavior so it is focus on agent with 8 checks.
-- `Deval: Benchmark Chat Model` — Benchmark wired model, focus on llm with 11 cases; samples per prompt configurable (1–5, default 1), reports pass@1 / pass@k per case.
+- `Deval: Benchmark Chat Model` — Benchmark wired model, focus on llm with 15 cases; samples per prompt configurable (1–5, default 1), reports pass@1 / pass@k per case.
 - `Deval: Show Scoreboard` — Show the record runs.
 
 ## Settings

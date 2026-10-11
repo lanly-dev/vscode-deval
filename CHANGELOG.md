@@ -6,9 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Added
 - `pass@k` scoring for the model benchmark (command 2): samples per prompt configurable via `deval.samplesPerPrompt` (1–5, default 1); per-case checks report pass@1 (mean single-sample success) and pass@k (solved in at least one sample).
+- Four harder executable code cases for the benchmark suite (now 9 code + 6 keyword = 15 cases): merge-intervals, valid-parentheses, coin-change (greedy fails the `[1,3,4] → 6` vector), and group-anagrams with canonical output ordering.
 
 ### Planned
-- Harder executable code cases for the benchmark suite.
 - Scripted trajectory scenarios exercising command 1's checks against known-good/bad runs.
 - Token usage tracking via the provider backend (input/output tokens per run).
 
