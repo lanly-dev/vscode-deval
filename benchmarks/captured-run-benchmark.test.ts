@@ -2,10 +2,10 @@
  * Benchmark: evaluate a captured `@deval` agent run.
  *
  * The deterministic scoring lives in `src/events/score-trajectory.ts`, shared
- * with the `Deval: Evaluate Captured Agent Run` command — this suite just runs
+ * with the `Deval: Score Agent Run` command — this suite just runs
  * each check as a test case so `npm run benchmark` reports them.
  *
- * `Deval: Evaluate Captured Agent Run` picks a JSONL capture and sets
+ * `Deval: Score Agent Run` picks a JSONL capture and sets
  * `DEEPEVAL_VSCODE_EVENTS` to its absolute path before starting the suite.
  *
  * When the environment variable is unset (a plain `npx deepeval test run`) the

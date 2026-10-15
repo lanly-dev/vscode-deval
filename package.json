@@ -36,11 +36,11 @@
     "commands": [
       {
         "command": "deval.benchmarkChatModel",
-        "title": "Deval: Benchmark Chat Model"
+        "title": "Deval: Benchmark Model"
       },
       {
         "command": "deval.evaluateAgentRun",
-        "title": "Deval: Evaluate Captured Agent Run"
+        "title": "Deval: Score Agent Run"
       },
       {
         "command": "deval.showScoreboard",
@@ -134,7 +134,7 @@
           "default": 1,
           "minimum": 1,
           "maximum": 5,
-          "description": "How many times each prompt is asked in 'Deval: Benchmark Chat Model'. Values above 1 enable pass@k scoring (pass@1 / pass@k per case) at the cost of proportionally more model calls."
+          "description": "How many times each prompt is asked in 'Deval: Benchmark Model'. Values above 1 enable pass@k scoring (pass@1 / pass@k per case) at the cost of proportionally more model calls."
         }
       }
     }

@@ -10,8 +10,8 @@ Press `F5` to launch the Extension Development Host, then use the Command Palett
 
 | # | Command | What it does |
 | --- | --- | --- |
-| 1 | `Deval: Evaluate Captured Agent Run` | Score a captured `.jsonl` trajectory in the extension — no suite files or installs needed. If no capture exists yet, offers to run the Deval agent now and evaluates the run it creates. |
-| 2 | `Deval: Benchmark Chat Model` | Benchmark the chat model wired to VS Code with the **built-in** suite — no workspace test files needed. |
+| 1 | `Deval: Score Agent Run` | Score a captured `.jsonl` trajectory in the extension — no suite files or installs needed. If no capture exists yet, offers to run the Deval agent now and evaluates the run it creates. |
+| 2 | `Deval: Benchmark Model` | Benchmark the LLM model wired to VS Code with the **built-in** suite — no workspace test files needed. |
 | 3 | `Deval: Show Scoreboard` | Compare every recorded run side by side in a scoreboard webview. |
 
 Command 2 launches a VS Code task and reports the exit code in a notification when it finishes. It refuses to launch `npx` in a workspace that has no `deepeval` of its own: npx would download an unpatched copy into its own cache, and the suite would still be missing its `vitest`, so the run offers **Install dependencies** instead of failing. The install goes into the workspace's `.deval/` folder — never into the workspace root — and the suite runs from there.
@@ -93,7 +93,7 @@ Every `@deval` run is captured automatically — no hooks to install, nothing to
 {"timestamp":"...","session_id":"...","hook_event_name":"PreToolUse","tool_name":"deval_readFile","tool_use_id":"call_...","tool_input":{...}}
 ```
 
-Command 1 (`Deval: Evaluate Captured Agent Run`) scores the trajectory **inside the extension** — no suite files, no installs. It runs eleven deterministic checks and reports them in a notification, with per-check details on demand:
+Command 1 (`Deval: Score Agent Run`) scores the trajectory **inside the extension** — no suite files, no installs. It runs eleven deterministic checks and reports them in a notification, with per-check details on demand:
 
 - the capture holds only valid JSON objects, recorded events, and a session id
 - the run finished (a `Stop` event)
@@ -111,7 +111,7 @@ The captured-run suite evaluates the **trajectory** — prompts, tool names, pai
 
 **Privacy:** captures contain prompts, tool arguments, and tool results, so `.deval/` is Git-ignored. Do not commit it.
 
-Command 1 (`Deval: Evaluate Captured Agent Run`) offers to run the Deval agent for you when no capture exists yet — you type (or accept) a prompt, the agent runs headlessly with a progress notification, and the run it creates is evaluated straight away.
+Command 1 (`Deval: Score Agent Run`) offers to run the Deval agent for you when no capture exists yet — you type (or accept) a prompt, the agent runs headlessly with a progress notification, and the run it creates is evaluated straight away.
 
 ## The `@deval` agent
 `@deval` is a real tool-calling agent, not just a chat forwarder. When you send it a prompt, it runs an agentic loop against the model selected in Chat:
@@ -128,16 +128,16 @@ v1 ships three **read-only** tools, so the agent needs no confirmation UX:
 | `deval_listFiles` | Lists a workspace directory, non-recursive. |
 | `deval_grep` | Searches file contents for a pattern. |
 
-Every run is captured to `.deval/vscode-agent-events/<session-id>.jsonl`. That means `Deval: Evaluate Captured Agent Run` scores the agent's trajectory with no extra wiring, and `benchmarks/agent-loop-benchmark.test.ts` measures the loop itself with a scripted model.
+Every run is captured to `.deval/vscode-agent-events/<session-id>.jsonl`. That means `Deval: Score Agent Run` scores the agent's trajectory with no extra wiring, and `benchmarks/agent-loop-benchmark.test.ts` measures the loop itself with a scripted model.
 
 The loop core (`src/agent/loop.ts`) is dependency-free: it takes the model, the tools, and the capture sink as ports, so the same code runs in the extension host (via `src/agent/vscode-adapter.ts`), in unit tests with fakes, and in benchmark suites.
 
-It is an extension-owned agent, not a hook into GitHub Copilot's built-in agent mode. The model comes from the user's Chat model picker via the Language Model API — no API key needed.
+It is an extension-owned agent, not a hook into GitHub Copilot's built-in agent mode. The model comes from the user's LLM model picker via the Language Model API — no API key needed.
 
-## Benchmark the wired chat model
-`Deval: Benchmark Chat Model` scores the model behind your VS Code Chat — whatever you have wired up — with a suite that **ships inside the extension**, so it works in any workspace, even one with no test files of its own.
+## Benchmark the wired LLM model
+`Deval: Benchmark Model` scores the model behind your VS Code Chat — whatever you have wired up — with a suite that **ships inside the extension**, so it works in any workspace, even one with no test files of its own.
 
-1. It asks `vscode.lm` which chat models are available (letting you pick when there are several) and sends each prompt from `resources/builtin-suites/spec.json` to the model.
+1. It asks `vscode.lm` which LLM models are available (letting you pick when there are several) and sends each prompt from `resources/builtin-suites/spec.json` to the model.
 2. The responses are recorded to `.deval/model-benchmark/<timestamp>/responses.json`.
 3. The built-in suite (`resources/builtin-suites/model-benchmark.test.ts`) is staged into the same folder — it resolves `vitest` from the workspace there — and run with `DEEPEVAL_MODEL_RESPONSES` pointing at the responses file. One run, one folder.
 
@@ -148,7 +148,7 @@ This benchmarks the **model only** — prompt in, response out. It does not exer
 ## Scoreboard
 `Deval: Show Scoreboard` compares runs against each other: every column is one run (oldest first), every row is a trajectory check (command 1) or a benchmark case (command 2), and each cell is ✓/✗ — hover it for the detail behind the score.
 
-- Command 1 appends one record per evaluation to `.deval/scores.jsonl`: the capture filename, the chat model behind the run (recorded in the capture's `SessionStart` event), plus the 8 trajectory checks.
+- Command 1 appends one record per evaluation to `.deval/scores.jsonl`: the capture filename, the LLM model behind the run (recorded in the capture's `SessionStart` event), plus the 11 trajectory checks.
 - Command 2 appends one record per successful benchmark: the model name plus one check per built-in case, parsed from DeepEval's own results file.
 - The scoreboard reads `.deval/scores.jsonl` and renders agent runs and model benchmarks as two tables. With no history yet, it tells you to run command 1 or 2 first.
 
@@ -168,9 +168,9 @@ src/
 │   ├── event-writer.ts            # writes captures in the format event-log.ts reads
 │   └── score-trajectory.ts        # deterministic trajectory checks, shared by command 1 and the captured-run suite
 ├── test/                          # extension-host tests (Mocha, via `npm test`)
-├── chat-models.ts                 # shared chat-model picker (vscode.lm)
+├── chat-models.ts                 # shared LLM model picker (vscode.lm)
 ├── deepeval-patch.ts              # repairs the deepeval@0.9.22 CLI in any workspace
-├── model-benchmark.ts             # the built-in chat-model benchmark command
+├── model-benchmark.ts             # the built-in LLM model benchmark command
 ├── scores.ts                      # score history: append/read .deval/scores.jsonl (dependency-free)
 ├── scoreboard.ts                  # renders the scoreboard webview HTML (dependency-free)
 ├── scoreboard-panel.ts            # command 3: opens the scoreboard webview

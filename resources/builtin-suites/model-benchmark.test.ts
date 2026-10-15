@@ -1,9 +1,9 @@
 /**
- * Built-in benchmark: score responses from the chat model wired to VS Code.
+ * Built-in benchmark: score responses from the LLM model wired to VS Code.
  *
  * This suite ships inside the extension (`resources/builtin-suites/`). The
- * `Deval: Benchmark Chat Model` command queries the user's selected chat
- * model for every case in `spec.json`, writes the responses to a JSON file,
+ * `Deval: Benchmark Model` command queries the user's selected LLM model
+ * for every case in `spec.json`, writes the responses to a JSON file,
  * stages this suite next to it, and runs it with `DEEPEVAL_MODEL_RESPONSES`
  * pointing at the responses file.
  *
@@ -282,10 +282,10 @@ function loadResponses(): Map<string, string[]> | undefined {
 	return responses;
 }
 
-describe('built-in chat model benchmark', () => {
+describe('built-in LLM model benchmark', () => {
 	const responses = loadResponses();
 	if (!responses) {
-		it.skip(`set ${ENV_VAR} to a model-responses JSON file (run "Deval: Benchmark Chat Model")`, () => {});
+		it.skip(`set ${ENV_VAR} to a model-responses JSON file (run "Deval: Benchmark Model")`, () => {});
 		return;
 	}
 

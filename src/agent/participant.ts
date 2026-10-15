@@ -17,7 +17,7 @@ export const DEVAL_AGENT_SYSTEM_PROMPT =
 	'Call a tool whenever you need information you do not already have, then answer concisely.';
 
 /**
- * Run the `@deval` agent: an agentic loop over the chat model with tools.
+ * Run the `@deval` agent: an agentic loop over the LLM model with tools.
  *
  * Every run is captured to `.deval/vscode-agent-events/<session-id>.jsonl`
  * in the workspace's own capture format, so `Deval: Evaluate Captured

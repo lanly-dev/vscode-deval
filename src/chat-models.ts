@@ -1,9 +1,9 @@
-// Picking the chat model wired to VS Code, shared by the commands that
+// Picking the LLM model wired to VS Code, shared by the commands that
 // drive a model outside the Chat view.
 import * as vscode from 'vscode';
 
 /**
- * Ask `vscode.lm` which chat models are available and return the one to use.
+ * Ask `vscode.lm` which LLM models are available and return the one to use.
  *
  * Returns the only model when there is just one, asks the user when there are
  * several, and warns when there are none (the user needs to select a model in
@@ -13,7 +13,7 @@ export async function pickChatModel(): Promise<vscode.LanguageModelChat | undefi
 	const models = await vscode.lm.selectChatModels();
 	if (!models.length) {
 		void vscode.window.showWarningMessage(
-			'No chat models are available. Select a model in the VS Code Chat view first — deval tests whichever model you have wired up.',
+			'No LLM models are available. Select a model in the VS Code Chat view first — deval tests whichever model you have wired up.',
 		);
 		return undefined;
 	}
@@ -26,7 +26,7 @@ export async function pickChatModel(): Promise<vscode.LanguageModelChat | undefi
 			description: [model.vendor, model.family].filter(Boolean).join(' · '),
 			model,
 		})),
-		{ placeHolder: 'Select the chat model' },
+		{ placeHolder: 'Select the LLM model' },
 	);
 	return picked?.model;
 }
