@@ -49,7 +49,7 @@ export interface AgentEvent {
 	tool_use_id?: string;
 	tool_response?: unknown;
 	stop_hook_active?: boolean;
-	/** Chat model behind the run, recorded on `SessionStart` by the `@deval` agent. */
+	/** LLM model behind the run, recorded on `SessionStart` by the `@deval` agent. */
 	model?: string;
 	/**
 	 * Final answer text, recorded on `Stop` by the `@deval` agent. Lets the
@@ -81,7 +81,7 @@ export interface CapturedRunSummary {
 	sessionId?: string;
 	transcriptPath?: string;
 	workingDirectory?: string;
-	/** Chat model behind the run, when the capture recorded one. */
+	/** LLM model behind the run, when the capture recorded one. */
 	model?: string;
 	/** Prompts the user submitted, in order. */
 	prompts: string[];
@@ -300,7 +300,7 @@ export function loadCapturedRun(filePath: string): { parsed: ParsedEventLog; sum
  *
  * Returns `undefined` when the variable is unset, which is the normal case when
  * a suite is launched directly through `npx deepeval test run` rather than
- * through the `Deval: Evaluate Captured Agent Run` command.
+ * through the `Deval: Score Agent Run` command.
  */
 export function resolveCapturedRunPath(env: NodeJS.ProcessEnv = process.env): string | undefined {
 	const value = env[DEEPEVAL_VSCODE_EVENTS];

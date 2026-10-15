@@ -1,4 +1,4 @@
-// The `Deval: Evaluate Captured Agent Run` command: pick (or create) a
+// The `Deval: Score Agent Run` command: pick (or create) a
 // captured `@deval` run, score its trajectory, and report the result —
 // plus the shared DeepEval dependency-install flow the model benchmark uses.
 import * as vscode from 'vscode';

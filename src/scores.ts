@@ -1,7 +1,7 @@
 // Score history for the Deval scoreboard.
 //
-// Every run of command 1 ("Evaluate Captured Agent Run") or command 2
-// ("Benchmark Chat Model") appends one record to `.deval/scores.jsonl`;
+// Every run of command 1 ("Score Agent Run") or command 2
+// ("Benchmark Model") appends one record to `.deval/scores.jsonl`;
 // command 3 ("Show Scoreboard") reads the file back and renders the runs
 // side by side so agents and models can be compared.
 //
@@ -65,7 +65,7 @@ export interface ScoreRecord {
 	kind: ScoreKind;
 	/** Short label: the capture filename for command 1, the model name for command 2. */
 	label: string;
-	/** Chat model behind an agent run, when the capture recorded one. */
+	/** LLM model behind an agent run, when the capture recorded one. */
 	model?: string;
 	checks: ScoreCheck[];
 }

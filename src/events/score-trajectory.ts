@@ -2,7 +2,7 @@
  * Deterministic trajectory scoring for captured `@deval` agent runs.
  *
  * Dependency-free like `event-log.ts`: the same scorer runs inside the
- * extension host (for `Deval: Evaluate Captured Agent Run`) and in the Vitest
+ * extension host (for `Deval: Score Agent Run`) and in the Vitest
  * process that DeepEval spawns (for `benchmarks/captured-run-benchmark.test.ts`),
  * so the command and the suite can never disagree about what a good
  * trajectory looks like.

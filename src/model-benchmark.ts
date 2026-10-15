@@ -1,5 +1,5 @@
-// Built-in benchmark for the chat model wired to VS Code.
-// `Deval: Benchmark Chat Model` asks the user's selected chat model every
+// Built-in benchmark for the LLM model wired to VS Code.
+// `Deval: Benchmark Model` asks the user's selected LLM model every
 // prompt in the built-in spec, records the responses, stages the built-in
 // suite into the workspace, and runs it with the responses fed in.
 import * as vscode from 'vscode';
@@ -93,7 +93,7 @@ async function askModel(
 	// A stalled model stream would otherwise hang the whole benchmark (and no
 	// score would ever be recorded). Time out instead; the caller records the
 	// error against that case and moves on.
-	return withTimeout(answer, MODEL_PROMPT_TIMEOUT_MS, 'Chat model response');
+	return withTimeout(answer, MODEL_PROMPT_TIMEOUT_MS, 'LLM model response');
 }
 
 /**
@@ -137,13 +137,13 @@ function withTimeout<T>(promise: Promise<T>, ms: number, what: string): Promise<
 }
 
 /**
- * Run the built-in model benchmark: query the wired chat model, record its
+ * Run the built-in model benchmark: query the wired LLM model, record its
  * answers, and score them with the suite that ships in `resources/`.
  */
 export async function runModelBenchmark(context: vscode.ExtensionContext): Promise<void> {
 	const folders = vscode.workspace.workspaceFolders;
 	if (!folders?.length) {
-		void vscode.window.showWarningMessage('Open a workspace folder to benchmark the chat model.');
+		void vscode.window.showWarningMessage('Open a workspace folder to benchmark the LLM model.');
 		return;
 	}
 	const workspaceFolder = folders[0];

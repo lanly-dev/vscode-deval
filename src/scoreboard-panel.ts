@@ -15,7 +15,7 @@ export async function showScoreboard(): Promise<void> {
 	const records = await readScores(devalDirectoryUri(folders[0]).fsPath);
 	if (!records.length) {
 		void vscode.window.showInformationMessage(
-			'Deval: no scores recorded yet. Run "Deval: Evaluate Captured Agent Run" or "Deval: Benchmark Chat Model" first.',
+			'Deval: no scores recorded yet. Run "Deval: Score Agent Run" or "Deval: Benchmark Model" first.',
 		);
 		return;
 	}
