@@ -10,7 +10,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Planned
 - Scripted trajectory scenarios exercising command 1's checks against known-good/bad runs.
-- Token usage tracking via the provider backend (input/output tokens per run).
 
 
 ## [0.0.1]
