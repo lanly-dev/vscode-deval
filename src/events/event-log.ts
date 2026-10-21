@@ -151,6 +151,7 @@ export function parseEventLog(text: string): ParsedEventLog {
 			tool_response: parsed.tool_response,
 			stop_hook_active: typeof parsed.stop_hook_active === 'boolean' ? parsed.stop_hook_active : undefined,
 			model: asOptionalString(parsed.model),
+			final_text: asOptionalString(parsed.final_text),
 		});
 	}
 
