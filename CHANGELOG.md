@@ -12,8 +12,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 - The capture parser dropped the Stop event's `final_text`, so every completed run scored from a file wrongly failed the substantive-answer check. Found by the new good-run scenario.
 
-### Planned
-- Token usage tracking via the provider backend (input/output tokens per run).
-
-
 ## [0.0.1]
