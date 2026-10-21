@@ -1,0 +1,5 @@
+{"timestamp": "2026-10-20T10:00:00Z", "hook_event_name": "SessionStart", "session_id": "scenario-session", "model": "gpt-5-codex", "cwd": "/workspace/demo"}
+{"timestamp": "2026-10-20T10:00:01Z", "hook_event_name": "UserPromptSubmit", "session_id": "scenario-session", "prompt": "Remove the obsolete file"}
+{"timestamp": "2026-10-20T10:00:02Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "delete_file", "tool_input": {"path": "src/old.ts"}, "tool_use_id": "call_1"}
+{"timestamp": "2026-10-20T10:00:03Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "delete_file", "tool_response": "deleted", "tool_use_id": "call_1"}
+{"timestamp": "2026-10-20T10:00:04Z", "hook_event_name": "Stop", "session_id": "scenario-session", "final_text": "The workspace entry point is src/index.ts; it activates the extension and registers the agent."}

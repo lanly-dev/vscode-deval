@@ -107,6 +107,8 @@ Command 1 (`Deval: Score Agent Run`) scores the trajectory **inside the extensio
 
 The same checks live in `src/events/score-trajectory.ts`, shared with `benchmarks/captured-run-benchmark.test.ts`, so the command and `npm run benchmark` can never disagree about what a good trajectory looks like.
 
+`benchmarks/trajectory-scenarios.test.ts` pins the checks end to end: `benchmarks/scenarios/` holds fabricated captures (a known-good run, one run per failure mode, an empty capture) whose expected pass/fail per check is declared in `scenarios.json`, and the suite loads each through the real parser and scorer.
+
 The captured-run suite evaluates the **trajectory** — prompts, tool names, pairing, completion, destructive-tool policy. A tool call that errored appears as a `PostToolUse` whose response carries the error, so interrupted runs stay evaluable.
 
 **Privacy:** captures contain prompts, tool arguments, and tool results, so `.deval/` is Git-ignored. Do not commit it.

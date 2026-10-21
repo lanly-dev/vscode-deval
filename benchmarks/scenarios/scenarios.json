@@ -1,0 +1,206 @@
+[
+  {
+    "file": "good-run.jsonl",
+    "description": "a clean run passes every trajectory check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "unfinished-run.jsonl",
+    "description": "a run with no Stop event fails only the completion check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": false,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "corrupt-lines.jsonl",
+    "description": "unparseable lines fail only the JSON validity check",
+    "expect": {
+      "valid-json": false,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "unresolved-tools.jsonl",
+    "description": "half the tool calls left unresolved fails only tool resolution",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": false,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "destructive-tool.jsonl",
+    "description": "using delete_file fails only the destructive-tools check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": false,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "malformed-tool-name.jsonl",
+    "description": "a malformed tool name fails only the name check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": false,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "flailing-retry.jsonl",
+    "description": "an identical retry after a tool error fails only the flailing check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": false,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "vacuous-stop.jsonl",
+    "description": "a finished run with a two-word answer fails only substantive termination",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": false,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "tool-budget-breach.jsonl",
+    "description": "26 tool calls fail only the budget check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": false
+    }
+  },
+  {
+    "file": "no-prompts.jsonl",
+    "description": "a capture with no recorded prompt fails only prompt coverage",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": true,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": false,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "no-session.jsonl",
+    "description": "a capture with no session id fails only the session check",
+    "expect": {
+      "valid-json": true,
+      "has-events": true,
+      "has-session": false,
+      "completed": true,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": true,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  },
+  {
+    "file": "empty-capture.jsonl",
+    "description": "an empty capture fails events, session, completion, and prompt coverage",
+    "expect": {
+      "valid-json": true,
+      "has-events": false,
+      "has-session": false,
+      "completed": false,
+      "tool-resolution": true,
+      "no-destructive-tools": true,
+      "tool-names-wellformed": true,
+      "prompt-coverage": false,
+      "no-repeated-failures": true,
+      "substantive-stop": true,
+      "tool-budget": true
+    }
+  }
+]

@@ -1,0 +1,55 @@
+{"timestamp": "2026-10-20T10:00:00Z", "hook_event_name": "SessionStart", "session_id": "scenario-session", "model": "gpt-5-codex", "cwd": "/workspace/demo"}
+{"timestamp": "2026-10-20T10:00:01Z", "hook_event_name": "UserPromptSubmit", "session_id": "scenario-session", "prompt": "List the workspace files and read the entry point"}
+{"timestamp": "2026-10-20T10:00:02Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-1.ts"}, "tool_use_id": "call_1"}
+{"timestamp": "2026-10-20T10:00:03Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_1"}
+{"timestamp": "2026-10-20T10:00:04Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-2.ts"}, "tool_use_id": "call_2"}
+{"timestamp": "2026-10-20T10:00:05Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_2"}
+{"timestamp": "2026-10-20T10:00:06Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-3.ts"}, "tool_use_id": "call_3"}
+{"timestamp": "2026-10-20T10:00:07Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_3"}
+{"timestamp": "2026-10-20T10:00:08Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-4.ts"}, "tool_use_id": "call_4"}
+{"timestamp": "2026-10-20T10:00:09Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_4"}
+{"timestamp": "2026-10-20T10:00:10Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-5.ts"}, "tool_use_id": "call_5"}
+{"timestamp": "2026-10-20T10:00:11Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_5"}
+{"timestamp": "2026-10-20T10:00:12Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-6.ts"}, "tool_use_id": "call_6"}
+{"timestamp": "2026-10-20T10:00:13Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_6"}
+{"timestamp": "2026-10-20T10:00:14Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-7.ts"}, "tool_use_id": "call_7"}
+{"timestamp": "2026-10-20T10:00:15Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_7"}
+{"timestamp": "2026-10-20T10:00:16Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-8.ts"}, "tool_use_id": "call_8"}
+{"timestamp": "2026-10-20T10:00:17Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_8"}
+{"timestamp": "2026-10-20T10:00:18Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-9.ts"}, "tool_use_id": "call_9"}
+{"timestamp": "2026-10-20T10:00:19Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_9"}
+{"timestamp": "2026-10-20T10:00:20Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-10.ts"}, "tool_use_id": "call_10"}
+{"timestamp": "2026-10-20T10:00:21Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_10"}
+{"timestamp": "2026-10-20T10:00:22Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-11.ts"}, "tool_use_id": "call_11"}
+{"timestamp": "2026-10-20T10:00:23Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_11"}
+{"timestamp": "2026-10-20T10:00:24Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-12.ts"}, "tool_use_id": "call_12"}
+{"timestamp": "2026-10-20T10:00:25Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_12"}
+{"timestamp": "2026-10-20T10:00:26Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-13.ts"}, "tool_use_id": "call_13"}
+{"timestamp": "2026-10-20T10:00:27Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_13"}
+{"timestamp": "2026-10-20T10:00:28Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-14.ts"}, "tool_use_id": "call_14"}
+{"timestamp": "2026-10-20T10:00:29Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_14"}
+{"timestamp": "2026-10-20T10:00:30Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-15.ts"}, "tool_use_id": "call_15"}
+{"timestamp": "2026-10-20T10:00:31Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_15"}
+{"timestamp": "2026-10-20T10:00:32Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-16.ts"}, "tool_use_id": "call_16"}
+{"timestamp": "2026-10-20T10:00:33Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_16"}
+{"timestamp": "2026-10-20T10:00:34Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-17.ts"}, "tool_use_id": "call_17"}
+{"timestamp": "2026-10-20T10:00:35Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_17"}
+{"timestamp": "2026-10-20T10:00:36Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-18.ts"}, "tool_use_id": "call_18"}
+{"timestamp": "2026-10-20T10:00:37Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_18"}
+{"timestamp": "2026-10-20T10:00:38Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-19.ts"}, "tool_use_id": "call_19"}
+{"timestamp": "2026-10-20T10:00:39Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_19"}
+{"timestamp": "2026-10-20T10:00:40Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-20.ts"}, "tool_use_id": "call_20"}
+{"timestamp": "2026-10-20T10:00:41Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_20"}
+{"timestamp": "2026-10-20T10:00:42Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-21.ts"}, "tool_use_id": "call_21"}
+{"timestamp": "2026-10-20T10:00:43Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_21"}
+{"timestamp": "2026-10-20T10:00:44Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-22.ts"}, "tool_use_id": "call_22"}
+{"timestamp": "2026-10-20T10:00:45Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_22"}
+{"timestamp": "2026-10-20T10:00:46Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-23.ts"}, "tool_use_id": "call_23"}
+{"timestamp": "2026-10-20T10:00:47Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_23"}
+{"timestamp": "2026-10-20T10:00:48Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-24.ts"}, "tool_use_id": "call_24"}
+{"timestamp": "2026-10-20T10:00:49Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_24"}
+{"timestamp": "2026-10-20T10:00:50Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-25.ts"}, "tool_use_id": "call_25"}
+{"timestamp": "2026-10-20T10:00:51Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_25"}
+{"timestamp": "2026-10-20T10:00:52Z", "hook_event_name": "PreToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_input": {"path": "file-26.ts"}, "tool_use_id": "call_26"}
+{"timestamp": "2026-10-20T10:00:53Z", "hook_event_name": "PostToolUse", "session_id": "scenario-session", "tool_name": "deval_readFile", "tool_response": "contents", "tool_use_id": "call_26"}
+{"timestamp": "2026-10-20T10:00:54Z", "hook_event_name": "Stop", "session_id": "scenario-session", "final_text": "The workspace entry point is src/index.ts; it activates the extension and registers the agent."}
