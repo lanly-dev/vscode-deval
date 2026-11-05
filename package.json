@@ -28,31 +28,24 @@
     "color": "white",
     "theme": "light"
   },
-  "activationEvents": [
-    "onChatParticipant:deval.agent"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "deval.benchmarkChatModel",
-        "title": "Deval: Benchmark Model"
+        "command": "deval.runAgent",
+        "title": "Deval: Run Agent"
       },
       {
         "command": "deval.evaluateAgentRun",
         "title": "Deval: Score Agent Run"
       },
       {
+        "command": "deval.benchmarkChatModel",
+        "title": "Deval: Benchmark Model"
+      },
+      {
         "command": "deval.showScoreboard",
         "title": "Deval: Show Scoreboard"
-      }
-    ],
-    "chatParticipants": [
-      {
-        "id": "deval.agent",
-        "name": "deval",
-        "fullName": "Deval Agent",
-        "description": "A chat harness for evaluating agent behavior with DeepEval suites."
       }
     ],
     "languageModelTools": [

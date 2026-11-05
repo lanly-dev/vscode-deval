@@ -29,7 +29,7 @@ Command 2 launches a VS Code task and reports the exit code in a notification wh
 | `npm run package` | Production bundle for packaging. |
 
 ## The agent under test
-The system under test is the `@deval` agent loop itself (`src/agent/loop.ts`). It is deliberately dependency-free — it imports neither `vscode` nor `deepeval` — so the same loop runs in the extension host (via `src/agent/vscode-adapter.ts`), in unit tests with fake ports, and in the Vitest process that DeepEval spawns.
+The system under test is the Deval agent loop itself (`src/agent/loop.ts`). It is deliberately dependency-free — it imports neither `vscode` nor `deepeval` — so the same loop runs in the extension host (via `src/agent/vscode-adapter.ts`), in unit tests with fake ports, and in the Vitest process that DeepEval spawns.
 
 ```ts
 export interface AgentRun {
@@ -87,7 +87,7 @@ export DEEPEVAL_API_KEY=...
 ```
 
 ## Captures
-Every `@deval` run is captured automatically — no hooks to install, nothing to enable. The agent loop records prompt, tool-use, tool-result, and stop events to `.deval/vscode-agent-events/<session-id>.jsonl`:
+Every agent run is captured automatically — no hooks to install, nothing to enable. The agent loop records prompt, tool-use, tool-result, and stop events to `.deval/vscode-agent-events/<session-id>.jsonl`:
 
 ```json
 {"timestamp":"...","session_id":"...","hook_event_name":"PreToolUse","tool_name":"deval_readFile","tool_use_id":"call_...","tool_input":{...}}
@@ -115,12 +115,14 @@ The captured-run suite evaluates the **trajectory** — prompts, tool names, pai
 
 Command 1 (`Deval: Score Agent Run`) offers to run the Deval agent for you when no capture exists yet — you type (or accept) a prompt, the agent runs headlessly with a progress notification, and the run it creates is evaluated straight away.
 
-## The `@deval` agent
-`@deval` is a real tool-calling agent, not just a chat forwarder. When you send it a prompt, it runs an agentic loop against the model selected in Chat:
+## The Deval agent
+The Deval agent is a real tool-calling agent, not just a chat forwarder. `Deval: Run Agent` asks for a prompt and runs an agentic loop against the model you pick:
 
 1. The model decides whether it needs information, and calls a tool.
 2. The extension executes the tool and feeds the result back.
 3. The loop repeats until the model answers, or stops after 10 turns.
+
+(Runs used to start from an `@deval` chat participant; chat participants are deprecated and only work in Local-harness sessions, so the command is the entry point now.)
 
 v1 ships three **read-only** tools, so the agent needs no confirmation UX:
 
@@ -145,7 +147,7 @@ It is an extension-owned agent, not a hook into GitHub Copilot's built-in agent 
 
 Eleven cases in two kinds. The six **keyword** cases pass when the response contains the required keywords (case-insensitive) and none of the forbidden ones: factual recall, following an exact-output instruction, arithmetic, a small code task, a formatting constraint, and a one-sentence summary. The five **code** cases ask the model to write a JavaScript function; the suite extracts the code, runs it against hidden test vectors in a sandboxed VM with a timeout, and scores the fraction of vectors that pass — a miniature HumanEval, so execution rather than keyword matching decides. Deterministic, no API key.
 
-This benchmarks the **model only** — prompt in, response out. It does not exercise VS Code's built-in agent harness: extensions can't drive or observe that loop through a stable API, which is why the fully observable `@deval` agent above exists for trajectory benchmarking.
+This benchmarks the **model only** — prompt in, response out. It does not exercise VS Code's built-in agent harness: extensions can't drive or observe that loop through a stable API, which is why the fully observable Deval agent above exists for trajectory benchmarking.
 
 ## Scoreboard
 `Deval: Show Scoreboard` compares runs against each other: every column is one run (oldest first), every row is a trajectory check (command 1) or a benchmark case (command 2), and each cell is ✓/✗ — hover it for the detail behind the score.
@@ -161,10 +163,10 @@ So to compare two models, run command 2 once per model and open the scoreboard; 
 src/
 ├── agent/
 │   ├── loop.ts                    # dependency-free agentic loop: model turns, tool dispatch, capture
-│   ├── tool-schemas.ts            # the read-only tools the @deval agent can call (dependency-free)
+│   ├── tool-schemas.ts            # the read-only tools the Deval agent can call (dependency-free)
 │   ├── tools.ts                   # vscode.lm tool registration + implementations
 │   ├── vscode-adapter.ts          # adapts the loop to vscode.lm (messages, tool calls, streaming)
-│   └── participant.ts             # the @deval chat participant + the headless agent run
+│   └── run-agent.ts               # runs the agent loop (model pick, progress, capture) for the Run Agent command
 ├── events/
 │   ├── event-log.ts               # JSONL capture parser + trajectory summarizer
 │   ├── event-writer.ts            # writes captures in the format event-log.ts reads
@@ -173,16 +175,17 @@ src/
 ├── chat-models.ts                 # shared LLM model picker (vscode.lm)
 ├── deepeval-patch.ts              # repairs the deepeval@0.9.22 CLI in any workspace
 ├── model-benchmark.ts             # the built-in LLM model benchmark command
+├── run-agent-command.ts           # command: run the Deval agent, then offer to score the run
 ├── scores.ts                      # score history: append/read .deval/scores.jsonl (dependency-free)
 ├── scoreboard.ts                  # renders the scoreboard webview HTML (dependency-free)
 ├── scoreboard-panel.ts            # command 3: opens the scoreboard webview
 ├── suites.ts                      # the evaluate command, capture picker, install flow
-└── extension.ts                   # thin entry point: registers commands and the participant
+└── extension.ts                   # thin entry point: registers the commands and the tools
 resources/
 └── builtin-suites/                # the built-in model benchmark: spec.json + the suite (shipped)
 benchmarks/
-├── captured-run-benchmark.test.ts # evaluates a captured @deval run
-├── agent-loop-benchmark.test.ts   # evaluates the @deval agent loop with a scripted model
+├── captured-run-benchmark.test.ts # evaluates a captured agent run
+├── agent-loop-benchmark.test.ts   # evaluates the Deval agent loop with a scripted model
 └── metrics/                       # custom deterministic metrics
 scripts/
 └── patch-deepeval.mjs             # see "Known upstream issue" below

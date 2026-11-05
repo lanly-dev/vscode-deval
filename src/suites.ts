@@ -1,5 +1,5 @@
 // The `Deval: Score Agent Run` command: pick (or create) a
-// captured `@deval` run, score its trajectory, and report the result —
+// captured Deval agent run, score its trajectory, and report the result —
 // plus the shared DeepEval dependency-install flow the model benchmark uses.
 import * as vscode from 'vscode';
 
@@ -7,13 +7,13 @@ import { hasDeepEvalInstall, hasVitestInstall, patchDeepEvalInstall } from './de
 import { loadCapturedRun } from './events/event-log';
 import { scoreCapturedTrajectory, type TrajectoryCheck } from './events/score-trajectory';
 import { appendScore } from './scores';
-import { runDevalAgentHeadless } from './agent/participant';
+import { runDevalAgent } from './agent/run-agent';
 
 /** Folder the agent loop writes captures into, relative to the workspace root. */
 export const CAPTURED_RUN_DIRECTORY = ['.deval', 'vscode-agent-events'];
 
 /**
- * Ask the user which captured `@deval` run to evaluate.
+ * Ask the user which captured Deval agent run to evaluate.
  *
  * When no capture exists yet, offers to run the Deval agent now and evaluates
  * the run it creates. Returns `undefined` when the user declined to create
@@ -84,13 +84,13 @@ async function createCaptureNow(
 	if (!prompt) {
 		return undefined;
 	}
-	return runDevalAgentHeadless(workspaceFolder, prompt);
+	return runDevalAgent(workspaceFolder, prompt);
 }
 
 /**
  * Explain why no captured run could be offered.
  *
- * Captures are written automatically by the `@deval` agent loop, so an empty
+ * Captures are written automatically by the Deval agent loop, so an empty
  * directory just means the agent has not run yet in this workspace.
  */
 export function describeMissingCaptures(details: {
@@ -100,7 +100,7 @@ export function describeMissingCaptures(details: {
 	return (
 		`No captured agent runs found in "${details.workspaceName}". ` +
 		`Looked in ${details.eventsDirectory}. ` +
-		`Chat with @deval first — every run is captured automatically.`
+		`Run the agent first with "Deval: Run Agent" — every run is captured automatically.`
 	);
 }
 
@@ -227,7 +227,7 @@ export async function ensureDeepEvalReady(
  * No suite files and no DeepEval install needed — the scoring lives in the
  * extension and is shared with `benchmarks/captured-run-benchmark.test.ts`.
  */
-export async function evaluateAgentRun(): Promise<void> {
+export async function evaluateAgentRun(captureToScore?: vscode.Uri): Promise<void> {
 	const folders = vscode.workspace.workspaceFolders;
 	if (!folders?.length) {
 		void vscode.window.showWarningMessage('Open a workspace folder to evaluate a captured agent run.');
@@ -235,7 +235,9 @@ export async function evaluateAgentRun(): Promise<void> {
 	}
 	const workspaceFolder = folders[0];
 
-	const captureUri = await selectDeepEvalRun(workspaceFolder);
+	// A caller that just produced a run (the Run Agent command) passes its
+	// capture directly; from the palette, the user picks one instead.
+	const captureUri = captureToScore ?? (await selectDeepEvalRun(workspaceFolder));
 	if (!captureUri) {
 		return;
 	}
