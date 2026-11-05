@@ -48,8 +48,9 @@ function toVscodeMessage(message: LoopMessage): vscode.LanguageModelChatMessage 
 /**
  * A `ModelPort` backed by a `vscode.LanguageModelChat`.
  *
- * Text streams to `onTextChunk` as it arrives, so the chat participant can
- * display the agent thinking in real time.
+ * Text streams to `onTextChunk` as it arrives, so a caller can display the
+ * agent thinking in real time. The command-driven run has nowhere to stream
+ * to and passes a no-op.
  */
 export function createVscodeModelPort(
 	model: vscode.LanguageModelChat,
@@ -89,8 +90,9 @@ export function createVscodeModelPort(
 /**
  * A `ToolPort` backed by `vscode.lm.invokeTool`.
  *
- * `toolInvocationToken` comes from the chat request and makes the chat UI
- * show each invocation; it is `undefined` outside a chat participant.
+ * `toolInvocationToken` comes from a chat request and makes the chat UI
+ * show each invocation; agent runs start from a command, so it is always
+ * `undefined` here.
  */
 export function createVscodeToolPort(
 	token: vscode.CancellationToken,

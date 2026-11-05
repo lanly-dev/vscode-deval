@@ -1,6 +1,6 @@
 # Deval
 
-A VS Code extension with its own benchmarkable coding agent. Chat with `@deval` and it runs a real tool-calling loop against your LLM model; every run is captured, and DeepEval TypeScript suites score the runs — trajectory and tool use — with deterministic metrics.
+A VS Code extension with its own benchmarkable coding agent. Run the Deval agent and it runs a real tool-calling loop against your LLM model; every run is captured, and DeepEval TypeScript suites score the runs — trajectory and tool use — with deterministic metrics.
 <a href="https://marketplace.visualstudio.com/items?itemName=lanly-dev.deval" target="_blank">
   <img src='https://code.visualstudio.com/favicon.ico' width='10'/>
 </a>
@@ -10,14 +10,15 @@ A VS Code extension with its own benchmarkable coding agent. Chat with `@deval` 
 
 It gives you one thing: **an agent you can measure**.
 
-1. **The `@deval` agent** (`src/agent/`) — a tool-calling loop on `vscode.lm` with read-only workspace tools. No API key needed; the model comes from the LLM model picker.
+1. **The Deval agent** (`src/agent/`) — a tool-calling loop on `vscode.lm` with read-only workspace tools. No API key needed; the model comes from the LLM model picker.
 2. **Automatic capture** — every run is written to `.deval/vscode-agent-events/<session-id>.jsonl`.
 3. **Benchmarks** — DeepEval suites that score the loop (scripted model) and score real captured runs (trajectory, tool resolution, policy).
 
 The bundled suites use **deterministic metrics only**, so they run offline with no API key.
 
 ## Commands
-- `Deval: Score Agent Run` — tests your `@deval` agent's behavior with 11 trajectory checks.
+- `Deval: Run Agent` — run the Deval agent on a prompt; the run is captured and can be scored right away.
+- `Deval: Score Agent Run` — tests the Deval agent's behavior with 11 trajectory checks.
 - `Deval: Benchmark Model` — Benchmark wired model, focus on LLM model with 15 cases; samples per prompt configurable (1–5, default 1), reports pass@1 / pass@k per case.
 - `Deval: Show Scoreboard` — Show the record runs.
 
